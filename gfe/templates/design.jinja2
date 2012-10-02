@@ -1,0 +1,33 @@
+<!doctype html>
+<head>
+    <title>{% block title %}G. fonts explorer{% endblock title %}</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <meta name="keywords" content="python web application" />
+    <meta name="description" content="pyramid web application" />
+    {% block scripts %}{% endblock scripts %}
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js" type="text/javascript"></script>
+    <script type="text/javascript">{% block embedded_script %}{% endblock embedded_script %}</script>
+    <style type="text/css" media="screen">
+    {% block style %}{% endblock style %}
+    </style>
+</head>
+<body>
+<div id="main">
+    <div id="header">
+        {% block header %}
+            <h1 class="page-header">G. fonts explorer</h1>
+        {% endblock header %}
+    </div>
+    <div id="content">
+        {% block content %}
+        {% endblock content %}
+    </div>
+    <div id="footer">
+        {% block footer %}
+        <span>&copy; copyright 2012 by <a href="http://brahici.org">Brice Vissi&egrave;re</a> :: powered by <a href="http://www.pylonsproject.org">Pyramid</a> and <a href="http://jquery.com">jQuery</a></span>
+        {% endblock footer %}
+    </div>
+</div>
+</body>
+</html>
