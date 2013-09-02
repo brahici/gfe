@@ -8,6 +8,8 @@
 
 {% block scripts %}
 {{ super() }}
+    <script src="{{ request.static_url('gfe:static/spin.min.js') }}" type="text/javascript"></script>
+    <script src="{{ request.static_url('gfe:static/jquery.spin.js') }}" type="text/javascript"></script>
     <script type="text/javascript" src="{{ request.static_url('gfe:static/gfe.js') }}"></script>
 {% endblock scripts %}
 
@@ -19,8 +21,8 @@
 {{ super() }}
 <div id="criteria_and_buttons">
     <span>Enter font name (or part of it) : </span><input type="text" name="font_name" id="font_name" onkeypress="check_validation(event);">
-    <button onclick="let_the_magic_talk();">Search and display</button>
-    <button id="load_all" onclick="load_all_the_f_____g_stuff();">Load all fonts</button>
+    <button onclick="call_with_spinner(let_the_magic_talk);">Search and display</button>
+    <button id="load_all" onclick="call_with_spinner(load_all_the_f_____g_stuff);">Load all fonts</button>
     <button onclick="clear_all();">Clear</button>
     <span id="search_status"></span>
     <div id="search_result_container"><span id="search_result">&nbsp;<span></div>
@@ -33,5 +35,11 @@
 <script type="text/javascript">
     set_search_element($('#search_status'), 'ready to search', 'standard', 5000);
     $('#font_name').focus();
+    var fmgr = new FontsManager();
+    $(window).scroll(function () {
+        if($(window).scrollTop() + $(window).height() == $(document).height()) {
+            fmgr.more_fonts();
+        };
+    });
 </script>
 {% endblock content %}

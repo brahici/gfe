@@ -7,7 +7,10 @@ use it primarily for exploring a local copy of Google web fonts.
 
 It's powered by Pyramid and jQuery.
 
-gfe uses jQuery for ajax calls and DOM handling (http://jquery.com).
+gfe uses some javascript libraries:
+
+- jQuery for ajax calls and DOM handling (http://jquery.com)
+- spin.js for spinner (http://fgnass.github.com/spin.js/)
 
 
 Licence
@@ -32,7 +35,7 @@ a regular ``pip install fonttools-2.3.tar.gz``. If you don't use a virtual
 environment, you may check whether a FontTools package exists for your OS.
 FontTools requires numpy, available at PyPI and in most Linux distributions.
 
-jQuery is loaded from ajax.googleapis.com.
+spin.js is shipped with gfe. jQuery is loaded from ajax.googleapis.com.
 
 You can perform unitests::
 

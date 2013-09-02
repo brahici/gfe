@@ -1,28 +1,76 @@
-var loaded_fonts = {};
-var displayed_fonts = {};
-var current_timeouts = {}
+var current_timeouts = {};
 
-add_font_to_page = function(name, font, display) {
-    if(!loaded_fonts.hasOwnProperty(name)) {
-        loaded_fonts[name] = 1;
+function FontsManager() {
+    this.name = 'FontsManager';
+    this.MAX_LOADED = 10;
+    this.displayed_fonts = [];
+    this.fonts_index = [];
+    this.fonts_data = {};
+}
+
+FontsManager.prototype = {
+    test: function() {
+        return this;
+    },
+    add_font: function(name, font, display) {
+        if(this.fonts_index.indexOf(name) === -1) {
+            this.fonts_index.push(name);
+            this.fonts_data[name] = font;
+        }
+        if(display) {
+            this.display_font(name);
+        }
+    },
+    get_font: function(name) {
+        return this.fonts_data[name];
+    },
+    many_fonts: function(names) {
+        var result = [];
+        for (var idx = 0; idx < names.length; idx++) {
+            result.push(this.get_font(names[idx]));
+        };
+        return result;
+    },
+    has_font: function(name) {
+        return this.fonts_data.hasOwnProperty(name);
+    },
+    slice_fonts: function(begin, end) {
+        return this.fonts_index.slice(begin, end)
+    },
+    clear_displayed: function() {
+        this.displayed_fonts = [];
+        this.fonts_index = [];
+        $('#playground').css('display', 'none');
+        $('#playground').empty();
+    },
+    clear_all: function() {
+        this.clear_displayed();
+        this.fonts_data = {};
+    },
+    display_font: function(font) {
+        if (this.displayed_fonts.indexOf(font) === -1) {
+            this.displayed_fonts.push(font);
+        }
         $('head').append(font.style);
-    }
-    if(display) {
-        if (display && $('#playground').css('display') == 'none') {
+        $('#playground').append(font.sample);
+        if ($('#playground').css('display') == 'none') {
             $('#playground').css('display', 'block');
         }
-        if (!displayed_fonts.hasOwnProperty(name)) {
-            displayed_fonts[name] = 1;
-            $('#playground').append(font.sample);
+    },
+    more_fonts: function() {
+        var current = this.displayed_fonts.length;
+        if(this.fonts_index.length > current) {
+            var fonts = this.many_fonts(this.slice_fonts(current, current+this.MAX_LOADED));
+            for (var idx = 0; idx < fonts.length; idx++) {
+                this.display_font(fonts[idx]);
+            };
         }
     }
 }
 
 clear_all = function(ignore_font_name) {
     var _sr = $('#search_result');
-    displayed_fonts = {};
-    $('#playground').css('display', 'none');
-    $('#playground').empty();
+    fmgr.clear_displayed();
     if(!ignore_font_name) {
         $('#font_name').val('');
     }
@@ -57,11 +105,12 @@ let_the_magic_talk = function() {
     var _st = $('#search_status');
     var _sr = $('#search_result');
     var crit = $('#font_name').val().trim();
+    var count = 0;
     if(crit=='') {
         set_search_element(_st, 'Please input at least some text', 'error', 3000);
     } else {
         $.post('/search_font', {'font_name': crit}, function(data, status) {
-            var count = data.count;
+            count = data.count;
             if(count==0) {
                 var msg = 'no font matching criteria !';
                 set_search_element(_st, msg, 'standard', 5000);
@@ -72,11 +121,13 @@ let_the_magic_talk = function() {
                 _sr.addClass('bordered');
             }
             $.each(data.fonts, function(name, font) {
-                add_font_to_page(name, font, true);
+                fmgr.add_font(name, font);
             });
+            fmgr.more_fonts();
         }, 'json');
     }
     $('#font_name').focus();
+    return count;
 }
 
 check_validation = function(event) {
@@ -90,9 +141,42 @@ load_all_the_f_____g_stuff = function() {
     set_search_element(_st, 'loading all fonts ...', 'standard');
     $.post('/search_font', {'_all_fonts': 'go_for_it'}, function(data, status) {
         $.each(data.fonts, function(name, font) {
-            add_font_to_page(name, font, false);
+            fmgr.add_font(name, font);
         });
         set_search_element(_st, 'all fonts loaded !!!', 'standard', 2000);
         $('#load_all').remove();
     }, 'json');
+}
+
+var spinner_options = {
+  lines: 13,
+  length: 5,
+  width: 17,
+  radius: 36,
+  corners: 0.7,
+  rotate: 0,
+  color: '#000000',
+  speed: 1.7,
+  trail: 35,
+  shadow: false,
+  hwaccel: true,
+  className: 'spinner',
+  zIndex: 2e9,
+  top: 'auto',
+  left: 'auto',
+};
+
+call_with_spinner = function(fcn) {
+    // display container before 'spinning'
+    // else spinner is not centered
+    var loading = $('#loading');
+    loading.show();
+    var spinner = loading.spin(spinner_options);
+    window.setTimeout(function() {
+        fcn();
+        window.setTimeout(function (){
+            spinner.stop();
+            loading.hide();
+        }, 500);
+    }, 100);
 }
