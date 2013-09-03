@@ -18,7 +18,7 @@ requires = [
 
 setup(name='gfe',
       version='1.0',
-      description='A web application for browsing fonts',
+      description='A web application to browse fonts',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
         'Programming Language :: Python',

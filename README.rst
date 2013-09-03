@@ -2,7 +2,7 @@
 G. fonts explorer
 =================
 
-G. fonts explorer, or simply gfe, is a web application for browsing fonts. I
+G. fonts explorer, or simply gfe, is a web application to browse fonts. I
 use it primarily for exploring a local copy of Google web fonts.
 
 It's powered by Pyramid and jQuery.
